@@ -1,0 +1,99 @@
+enum ASSET_TYPE {
+	ERC721
+	ERC1155
+}
+
+enum CHAIN {
+	MAINNET
+}
+
+enum MARKET {
+	OPENSEA
+	DEFAULT
+}
+
+enum TRANSACTION_TYPE {
+	MINT
+	SALE
+	TRANSFER
+}
+
+"""
+ type ExampleEntity @entity {
+	id: ID!
+	count: BigInt!
+	hash: Bytes! # bytes32
+	exchange: Bytes! # address
+}
+"""
+type NonFungibleEntity @entity {
+	id: ID!
+	token_id: BigInt!
+	created_at: BigInt!
+	contract: ContractEntity!
+	owner: AccountEntity!
+	transactions: [TransactionEntity!]! @derivedFrom(field: "non_fungible")
+	token_uri: String
+}
+
+type SemiFungibleEntity @entity {
+	id: ID!
+	token_id: BigInt!
+	created_at: BigInt!
+	contract: ContractEntity!
+	owner: AccountEntity!
+	transactions: [TransactionEntity!]! @derivedFrom(field: "semi_fungible")
+	token_uri: String
+}
+
+type ContractEntity @entity {
+	id: ID!
+	created_at: BigInt!
+	owner: AccountEntity!
+	symbol: String!
+	name: String!
+	transactions: [TransactionEntity!]! @derivedFrom(field: "contract")
+	base_uri: String
+	total_supply: BigInt!
+	transaction_count: BigInt!
+	semi_fungibles: [SemiFungibleEntity!]! @derivedFrom(field: "contract")
+	non_fungibles: [NonFungibleEntity!]! @derivedFrom(field: "contract")
+	#holders: [AccountEntity!]!
+}
+
+type AccountEntity @entity {
+	id: ID!
+	address: Bytes!
+	contracts: [ContractEntity!]! @derivedFrom(field: "owner")
+	semi_fungibles: [SemiFungibleEntity!]! @derivedFrom(field: "owner")
+	non_fungibles: [NonFungibleEntity!]! @derivedFrom(field: "owner")
+	opensea_orders: [OpenSeaOrderEntity!]!
+		@derivedFrom(field: "from")
+		@derivedFrom(field: "to")
+	transactions: [TransactionEntity!]!
+		@derivedFrom(field: "from")
+		@derivedFrom(field: "to")
+}
+
+type TransactionEntity @entity {
+	id: ID!
+	occurred_at: BigInt!
+	type: TRANSACTION_TYPE!
+	asset_type: ASSET_TYPE!
+	non_fungible: NonFungibleEntity
+	semi_fungible: SemiFungibleEntity
+	contract: ContractEntity
+	from: AccountEntity!
+	to: AccountEntity!
+	market: MARKET!
+}
+
+type OpenSeaOrderEntity @entity {
+	id: ID!
+	occurred_at: BigInt!
+	from: AccountEntity!
+	to: AccountEntity!
+	value: BigInt!
+	offer: Boolean!
+	metadata: Bytes!
+}
