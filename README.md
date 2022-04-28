@@ -1,4 +1,4 @@
-# Gatsby Analytics Subgraph
+# ERC721 Subgraph
 
 Author: prmali
 
