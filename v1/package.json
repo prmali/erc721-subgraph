@@ -2,7 +2,7 @@
 	"author": {
 		"name": "prmali"
 	},
-	"name": "gatsby-analytics",
+	"name": "gatsby-subgraph",
 	"license": "MIT",
 	"scripts": {
 		"codegen": "graph codegen",
